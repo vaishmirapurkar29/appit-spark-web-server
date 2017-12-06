@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    body{background:DeepSkyBlue;font-family:Lucida;color: #fff; padding:30px;}
+    h1{font-size: 48px; letter-spacing: 2px; text-align:center;}
+    p{font-size:16px; text-align:left;}
+  </style>
+  <% include partials/nav.ejs %>
+  <center><h1>Team AppIt - Sign Up</h1></center>
+  <head></head>
+  <body>
+    <form id="login-form" method="POST" action="/sign-up">
+      <p><label for="uname">User Name</label></p>
+      <p><input type="uname" name="uname" /></p>
+      <p><label for="email">Email</label></p>
+      <p><input type="email" name="email" /></p>
+      <p><label for="pw">Password</label></p>
+      <p><input type="password" name="pw" /></p>
+      <p><input type="Submit" value="Submit"/></p>
+  </body>
+</html>
