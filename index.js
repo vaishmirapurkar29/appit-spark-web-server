@@ -43,11 +43,9 @@ app.post('/login',urlencodedParser,function(req,res){
           console.log(result);
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
-            uid: result[0].userid,
+            status:"TRUE",
             uname:result[0].uname,
-            dob:result[0].dob ,
-            pw: result[0].pass,
-            email: result[0].email
+            dob:result[0].dob
           };
           res.end(JSON.stringify(myobj));
           //res.render('login-success',{data: req.body})
