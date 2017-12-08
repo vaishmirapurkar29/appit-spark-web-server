@@ -44,7 +44,7 @@ app.post('/login',urlencodedParser,function(req,res){
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
             status:"TRUE",
-            uname:result[0].uname,
+            username:result[0].uname,
             dob:result[0].dob
           };
           res.end(JSON.stringify(myobj));
