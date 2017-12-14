@@ -41,6 +41,7 @@ app.post('/login',urlencodedParser,function(req,res){
       {
         console.log(result.length);
         var check=[];
+        console.log(result);
         check=result[0].pass;
         if(check===pw)
         {
