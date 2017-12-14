@@ -31,6 +31,7 @@ app.post('/login',urlencodedParser,function(req,res){
   con.query(sql,[email], function (err, result, fields) {
     if (result) {
       if (result.length==0){
+        console.log(result.length);
         res.writeHead(200, {'Content-Type': 'application/json'});
         var myobj3={status:'FALSE'};
         res.end(JSON.stringify(myobj3));
@@ -38,6 +39,7 @@ app.post('/login',urlencodedParser,function(req,res){
       }
       else
       {
+        console.log(result.length);
         var check=[];
         check=result[0].pass;
         if(check===pw)
@@ -45,9 +47,11 @@ app.post('/login',urlencodedParser,function(req,res){
           console.log(result);
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
-            status:"TRUE",
-            username:result[0].uname,
-            dob:result[0].dob
+            uid: result[0].userid,
+            uname:result[0].uname,
+            dob:result[0].dob ,
+            pw: result[0].pass,
+            email: result[0].email
           };
           res.end(JSON.stringify(myobj));
           //res.render('login-success',{data: req.body})
