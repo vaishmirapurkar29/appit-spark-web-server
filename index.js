@@ -45,14 +45,11 @@ app.post('/login',urlencodedParser,function(req,res){
         check=result[0].pass;
         if(check===pw)
         {
-          console.log(result);
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
-            uid: result[0].userid,
-            uname:result[0].uname,
+            uname:result[0].username,
             dob:result[0].dob ,
-            pw: result[0].pass,
-            email: result[0].email
+            pw: result[0].password,
           };
           res.end(JSON.stringify(myobj));
           //res.render('login-success',{data: req.body})
