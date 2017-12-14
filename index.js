@@ -42,7 +42,7 @@ app.post('/login',urlencodedParser,function(req,res){
         console.log(result.length);
         var check=[];
         check=result[0].pass;
-        if(check===pw)
+        if(check==pw)
         {
           console.log(result);
           res.writeHead(200, {'Content-Type': 'application/json'});
