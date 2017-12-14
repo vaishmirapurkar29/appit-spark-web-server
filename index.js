@@ -43,7 +43,7 @@ app.post('/login',urlencodedParser,function(req,res){
         var check=[];
         check=result[0].password;
         console.log(check);
-        if(check.equals(pw)==true)
+        if(check==pw)
         {
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
