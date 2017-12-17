@@ -25,7 +25,7 @@ app.get('/login',function(req,res){
 });
 app.post('/login',urlencodedParser,function(req,res){
   console.log(req.body);
-  var pw=req.body.password;
+  var pw=req.body.pw;
   var email=req.body.email;
   var sql='SELECT * FROM users WHERE email = ?';
   con.query(sql,[email], function (err, result, fields) {
@@ -40,10 +40,9 @@ app.post('/login',urlencodedParser,function(req,res){
       else
       {
         console.log(result.length);
-        var check=[];
-        check=result[0].pass;
-        console.log(check);
-        if(check==pw)
+        var check=result[0].password;
+        console.log(pw);
+        if(check===pw)
         {
           res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
@@ -69,5 +68,4 @@ app.post('/login',urlencodedParser,function(req,res){
 app.get('/profile/:name', function(req, res){
   res.render('profile');
 });
-
 app.listen(3000);
