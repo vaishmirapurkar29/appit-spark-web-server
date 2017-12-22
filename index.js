@@ -25,37 +25,41 @@ app.get('/login',function(req,res){
 });
 app.post('/login',urlencodedParser,function(req,res){
   console.log(req.body);
-  var pw=req.body.password;
+  var pw=req.body.pw;
   var email=req.body.email;
   var sql='SELECT * FROM users WHERE email = ?';
   con.query(sql,[email], function (err, result, fields) {
     if (result) {
       if (result.length==0){
-        console.log('Wrong email')
-        res.render('login-noemail');
+        console.log(result.length);
+        res.writeHead(200, {'Content-Type': 'application/json'});
+        var myobj3={status:'FALSE'};
+        res.end(JSON.stringify(myobj3));
+        //res.render('login-noemail');
       }
       else
       {
-        var check=[];
-        check=result[0].pass;
+        console.log(result.length);
+        var check=result[0].password;
+        console.log(pw);
         if(check===pw)
         {
-          console.log(result);
-          res.render('login-success',{data: req.body})
+          res.writeHead(200, {'Content-Type': 'application/json'});
           var myobj={
-            uid: result[0].userid,
-            uname:result[0].uname,
-            dob:result[0].dob ,
-            pw: result[0].pass,
-            email:result[0].email
+            uname:result[0].username,
+            dob:result[0].dob,
           };
           res.end(JSON.stringify(myobj));
+          //res.render('login-success',{data: req.body})
           console.log(myobj)
         }
         else {
+          res.writeHead(200, {'Content-Type': 'application/json'});
+          var myobj2={status:'FALSE'};
           console.log('No');
           console.log(check);
-          res.render('login-noemail');
+          res.end(JSON.stringify(myobj2));
+          //res.render('login-noemail');
         }
       }
     }
@@ -64,5 +68,4 @@ app.post('/login',urlencodedParser,function(req,res){
 app.get('/profile/:name', function(req, res){
   res.render('profile');
 });
-
 app.listen(3000);
