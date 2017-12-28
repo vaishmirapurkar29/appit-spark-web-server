@@ -68,4 +68,6 @@ app.post('/login',urlencodedParser,function(req,res){
 app.get('/profile/:name', function(req, res){
   res.render('profile');
 });
-app.listen(3000);
+app.listen(3000, function() {
+  console.log("AppIt Web Server is running on port 3000 ...");
+});
