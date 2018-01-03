@@ -44,14 +44,39 @@ app.post('/login',urlencodedParser,function(req,res){
         console.log(pw);
         if(check===pw)
         {
-          res.writeHead(200, {'Content-Type': 'application/json'});
-          var myobj={
-            uname:result[0].username,
-            dob:result[0].dob,
-          };
-          res.end(JSON.stringify(myobj));
+            myobj_user=[];
+            myobj_user.push({
+              uname:result[0].username,
+              dob:result[0].dob
+              });
+            var my_count;
+            //my_count=[];
+            con.query("SELECT COUNT(*) AS namesCount FROM businesses", function (err, rows, fields) {
+            if (err) throw err;
+            //console.log(rows[0].namesCount);
+            my_count=rows[0].namesCount;
+            });
+            var myobj_business; var ar;
+            con.query("SELECT * FROM businesses", function (err, result, fields) {
+            if (err) throw err;
+            myobj_business=[];
+            for (i = 0; i < my_count; i++) {
+              myobj_business.push({
+                business_id:result[i].business_id,
+                name:result[i].name,
+                //address:result[i].address,
+                type:result[i].type,
+                //phone:result[i].phone,
+                //open_hours:result[i].open_hours,
+                //number_of_reviews:result[i].number_of_reviews,
+                //average_rating:result[i].average_rating
+              });
+              }
+              res.writeHead(200, {'Content-Type': 'application/json'});
+              var arr={'credentials':'TRUE','user':myobj_user,'business':myobj_business};
+              res.end(JSON.stringify(arr));
+              });
           //res.render('login-success',{data: req.body})
-          console.log(myobj)
         }
         else {
           res.writeHead(200, {'Content-Type': 'application/json'});
