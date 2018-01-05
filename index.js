@@ -76,7 +76,7 @@ app.get('/profile/:name', function(req, res){
 /*****USERS CREATE REVIEWS*****/
 // handle a POST request at the route that let users create reviews
 app.post('/users/:userId/reviews', function(request, response) {
-  var userId = request.body.userId;
+  var userId = request.params.userId;
 
   var reply = {
     userId: userId
