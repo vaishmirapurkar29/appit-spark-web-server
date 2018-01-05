@@ -3,6 +3,10 @@ var express=require('express');
 var app=express();
 var bodyParser=require('body-parser');
 var urlencodedParser=bodyParser.urlencoded({extended: false});
+
+// parse application/json
+app.use(bodyParser.json());
+
 var con = mysql.createConnection({
   host: "localhost",
   user: "team",
@@ -70,6 +74,16 @@ app.get('/profile/:name', function(req, res){
 });
 
 /*****USERS CREATE REVIEWS*****/
+// handle a POST request at the route that let users create reviews
+app.post('/users/:userId/reviews', function(request, response) {
+  var userId = request.body.userId;
+
+  var reply = {
+    userId: userId
+  };
+
+  response.send(reply);
+});
 
 app.listen(3000, function() {
   console.log("AppIt Web Server is running on port 3000 ...");
