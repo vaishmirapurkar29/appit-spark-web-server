@@ -1,4 +1,5 @@
 node_modules/
+
 *.log
 
-post_requests.sh
+json_for_testing/

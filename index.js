@@ -76,10 +76,27 @@ app.get('/profile/:name', function(req, res){
 /*****USERS CREATE REVIEWS*****/
 // handle a POST request at the route that let users create reviews
 app.post('/users/:userId/reviews', function(request, response) {
-  var userId = request.params.userId;
+  // retrieve the user's id from the url parameter
+  var userId = Number(request.params.userId);
+
+  // other info will be retrieved from the body of the request
+  var businessId = request.body.businessId;
+  var lighting = request.body.lighting;
+  var audio = request.body.audio;
+  var decoration = request.body.decoration;
+  var staff = request.body.staff;
+  var comment = request.body.comment;
+  var average = (lighting + audio + decoration + staff) / 4;
 
   var reply = {
-    userId: userId
+    userId: userId,
+    businessId: businessId,
+    lighting: lighting,
+    audio: audio,
+    decoration: decoration,
+    staff: staff,
+    comment: comment,
+    average: average
   };
 
   response.send(reply);
