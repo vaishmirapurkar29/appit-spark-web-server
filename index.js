@@ -88,6 +88,12 @@ app.post('/users/:userId/reviews', function(request, response) {
   var comment = request.body.comment;
   var average = (lighting + audio + decoration + staff) / 4;
 
+  var sqlStatement =  'INSERT INTO reviews(lighting, audio, decoration, staff, comment, average, user_id, business_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+  con.query(sqlStatement, [lighting, audio, decoration, staff, comment, average, userId, businessId], function(err, result) {
+    if(err) throw err;
+    console.log("1 review inserted");
+  });
+
   var reply = {
     userId: userId,
     businessId: businessId,
