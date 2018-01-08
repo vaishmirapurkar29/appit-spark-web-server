@@ -88,12 +88,6 @@ app.post('/users/:userId/reviews', function(request, response) {
   var comment = request.body.comment;
   var average = (lighting + audio + decoration + staff) / 4;
 
-  var sqlStatement =  'INSERT INTO reviews(lighting, audio, decoration, staff, comment, average, user_id, business_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
-  con.query(sqlStatement, [lighting, audio, decoration, staff, comment, average, userId, businessId], function(err, result) {
-    if(err) throw err;
-    console.log("1 review inserted");
-  });
-
   var reply = {
     userId: userId,
     businessId: businessId,
@@ -104,6 +98,35 @@ app.post('/users/:userId/reviews', function(request, response) {
     comment: comment,
     average: average
   };
+  
+  // put the values of the variables into the SQL statement using parameter substitution
+  var insertReview =  'INSERT INTO reviews(lighting, audio, decoration, staff, comment, average, user_id, business_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+  // since we have multiple subsitutions, use an array
+  con.query(insertReview, [lighting, audio, decoration, staff, comment, average, userId, businessId], function(err, result) {
+    if(err) throw err;
+    console.log("1 review inserted");
+    reply.status = "success";
+  });
+  
+  // update the number of reviews and average rating in the businesses table
+  var numberOfReviews;
+  var averageRating;
+  var queryNumberOfReviews = 'SELECT number_of_reviews, average_rating FROM businesses WHERE business_id = ?';
+  con.query(queryNumberOfReviews, businessId, function(err, result) {
+    if(err) throw err;
+    // "result" is an array containing each row as an object
+    numberOfReviews = result[0].number_of_reviews;
+    averageRating = result[0].average_rating;
+    console.log("current number of reviews of business #" + businessId + ": " + numberOfReviews);
+    console.log("current average rating of business #" + businessId + ": " + averageRating);
+  });
+  // the update calculations go here
+  averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
+  numberOfReviews++;
+  console.log("after update, number of reviews: " + numberOfReviews);
+  console.log("after update, average rating: " + averageRating);
+
+
 
   response.send(reply);
 });
