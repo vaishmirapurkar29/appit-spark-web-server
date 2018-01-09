@@ -111,21 +111,26 @@ app.post('/users/:userId/reviews', function(request, response) {
   // update the number of reviews and average rating in the businesses table
   var numberOfReviews;
   var averageRating;
-  var queryNumberOfReviews = 'SELECT number_of_reviews, average_rating FROM businesses WHERE business_id = ?';
-  con.query(queryNumberOfReviews, businessId, function(err, result) {
+  var queryInfo = 'SELECT number_of_reviews, average_rating FROM businesses WHERE business_id = ?';
+  con.query(queryInfo, businessId, function(err, result) {
     if(err) throw err;
     // "result" is an array containing each row as an object
     numberOfReviews = result[0].number_of_reviews;
     averageRating = result[0].average_rating;
     console.log("current number of reviews of business #" + businessId + ": " + numberOfReviews);
     console.log("current average rating of business #" + businessId + ": " + averageRating);
+    averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
+    numberOfReviews++;
+    console.log("after update, number of reviews: " + numberOfReviews);
+    console.log("after update, average rating: " + averageRating);
   });
+  /*
   // the update calculations go here
   averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
   numberOfReviews++;
   console.log("after update, number of reviews: " + numberOfReviews);
   console.log("after update, average rating: " + averageRating);
-
+  */
 
 
   response.send(reply);
