@@ -4,6 +4,9 @@ var app=express();
 var bodyParser=require('body-parser');
 var urlencodedParser=bodyParser.urlencoded({extended: false});
 
+// import the async package to deal with asynchronous db interactions
+var async = require('async');
+
 // parse application/json
 app.use(bodyParser.json());
 
@@ -88,6 +91,9 @@ app.post('/users/:userId/reviews', function(request, response) {
   var comment = request.body.comment;
   var average = (lighting + audio + decoration + staff) / 4;
 
+  var numberOfReviews;
+  var averageRating;
+
   var reply = {
     userId: userId,
     businessId: businessId,
@@ -98,41 +104,47 @@ app.post('/users/:userId/reviews', function(request, response) {
     comment: comment,
     average: average
   };
-  
-  // put the values of the variables into the SQL statement using parameter substitution
-  var insertReview =  'INSERT INTO reviews(lighting, audio, decoration, staff, comment, average, user_id, business_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
-  // since we have multiple subsitutions, use an array
-  con.query(insertReview, [lighting, audio, decoration, staff, comment, average, userId, businessId], function(err, result) {
-    if(err) throw err;
-    console.log("1 review inserted");
-    reply.status = "success";
-  });
-  
-  // update the number of reviews and average rating in the businesses table
-  var numberOfReviews;
-  var averageRating;
-  var queryInfo = 'SELECT number_of_reviews, average_rating FROM businesses WHERE business_id = ?';
-  con.query(queryInfo, businessId, function(err, result) {
-    if(err) throw err;
-    // "result" is an array containing each row as an object
-    numberOfReviews = result[0].number_of_reviews;
-    averageRating = result[0].average_rating;
-    console.log("current number of reviews of business #" + businessId + ": " + numberOfReviews);
-    console.log("current average rating of business #" + businessId + ": " + averageRating);
-    averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
-    numberOfReviews++;
-    console.log("after update, number of reviews: " + numberOfReviews);
-    console.log("after update, average rating: " + averageRating);
-  });
-  /*
-  // the update calculations go here
-  averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
-  numberOfReviews++;
-  console.log("after update, number of reviews: " + numberOfReviews);
-  console.log("after update, average rating: " + averageRating);
-  */
 
+  async.series([
+    // let user insert a review first
+    function(callback) {
+      // put the values of the variables into the SQL statement using parameter substitution
+      var insertReview =  'INSERT INTO reviews(lighting, audio, decoration, staff, comment, average, user_id, business_id) VALUES(?, ?, ?, ?, ?, ?, ?, ?)';
+      // since we have multiple subsitutions, use an array
+      con.query(insertReview, [lighting, audio, decoration, staff, comment, average, userId, businessId], function(err, result) {
+        if(err) throw err;
+        console.log("userId " + userId + " inserted 1 review");
+        // reply.status = "success";
+        callback();
+      });
+    },
 
+    // then re-calculate the number of reviews and average rating in the businesses table
+    function(callback) {
+      var queryInfo = 'SELECT number_of_reviews, average_rating FROM businesses WHERE business_id = ?';
+      con.query(queryInfo, businessId, function(err, result) {
+        if(err) throw err;
+        // "result" is an array containing each row as an object
+        numberOfReviews = result[0].number_of_reviews;
+        averageRating = result[0].average_rating;
+        console.log("current number of reviews of business #" + businessId + ": " + numberOfReviews);
+        console.log("current average rating of business #" + businessId + ": " + averageRating);
+        averageRating = ((averageRating * numberOfReviews) + average) / (numberOfReviews + 1);
+        numberOfReviews++;
+        console.log("after update, number of reviews: " + numberOfReviews);
+        console.log("after update, average rating: " + averageRating);
+        callback();
+      });
+    }
+  ], function(err) {
+      if (err) throw err;
+      // finally update the new data into the businesses table
+      var updateInfo = 'UPDATE businesses SET number_of_reviews = ?, average_rating = ? WHERE business_id = ?';
+      con.query(updateInfo, [numberOfReviews, averageRating, businessId], function(err, result) {
+        if(err) throw err;
+        console.log("Data updated");
+      });
+  });
   response.send(reply);
 });
 
