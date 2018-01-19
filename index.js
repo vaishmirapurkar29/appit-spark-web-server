@@ -36,7 +36,7 @@ app.post('/login',urlencodedParser,function(req,res){
       if (result.length==0){
         console.log(result.length);
         res.writeHead(200, {'Content-Type': 'application/json'});
-        var myobj3={status:'FALSE'};
+        var myobj3={credentials:'FALSE'};
         res.end(JSON.stringify(myobj3));
         //res.render('login-noemail');
       }
