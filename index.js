@@ -121,7 +121,6 @@ app.post('/business',urlencodedParser,function(req,res){
       var bus_in={'business':arr,'reviews':myobj_reviews};
       res.end(JSON.stringify(bus_in));
   });
-
   });
 });
 app.listen(3000);
